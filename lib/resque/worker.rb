@@ -143,7 +143,7 @@ module Resque
           else
             procline "Processing #{job.queue} since #{Time.now.to_i}"
             perform(job, &block)
-            exit! unless @cant_fork
+            exit unless @cant_fork
           end
 
           done_working
