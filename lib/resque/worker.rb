@@ -143,7 +143,7 @@ module Resque
           else
             procline "Processing #{job.queue} since #{Time.now.to_i}"
             perform(job, &block)
-            exit unless @cant_fork
+            @terminated = true && exit unless @cant_fork
           end
 
           done_working
@@ -155,8 +155,8 @@ module Resque
         end
       end
 
-    ensure
-      unregister_worker
+    ensure # only for parent, not for child!
+      unregister_worker unless @terminated
     end
 
     # DEPRECATED. Processes a single job. If none is given, it will
