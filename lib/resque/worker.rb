@@ -142,6 +142,7 @@ module Resque
             procline "Forked #{@child} at #{Time.now.to_i}"
             Process.wait(@child)
           else
+            @parent = false
             procline "Processing #{job.queue} since #{Time.now.to_i}"
             perform(job, &block)
             exit unless @cant_fork
