@@ -137,13 +137,14 @@ module Resque
           working_on job
 
           if @child = fork
+            @parent = true
             srand # Reseeding
             procline "Forked #{@child} at #{Time.now.to_i}"
             Process.wait(@child)
           else
             procline "Processing #{job.queue} since #{Time.now.to_i}"
             perform(job, &block)
-            @terminated = true && exit unless @cant_fork
+            exit unless @cant_fork
           end
 
           done_working
@@ -156,7 +157,7 @@ module Resque
       end
 
     ensure # only for parent, not for child!
-      unregister_worker unless @terminated
+      unregister_worker if @parent
     end
 
     # DEPRECATED. Processes a single job. If none is given, it will
